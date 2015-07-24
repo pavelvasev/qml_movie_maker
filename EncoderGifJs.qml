@@ -6,7 +6,7 @@ Column {
 
     JsLoader {
         //source: Qt.resolvedUrl( "whammy-master/whammy.js" )
-        source: "https://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.js"
+        source: "http://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.js"
         onLoaded: console.log("loaded gif.js");
     }
 
@@ -51,7 +51,7 @@ Column {
 				  quality: 10,
 				  width: w,
 				  height: h,
-				  workerScript: "https://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.worker.js"
+				  workerScript: "http://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.worker.js"
 				});
         
 
