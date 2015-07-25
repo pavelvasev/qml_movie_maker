@@ -16,7 +16,7 @@ Item {
 
     property var outputBlob
     property var outputObjectUrl: outputBlob ? window.URL.createObjectURL(outputBlob) : null;
-    property var outputIsVideo: true
+    property var outputIsVideo: videoEncoder.outputIsVideo
 
     property var imagesCount: 0
     property var videoEncoder
@@ -64,7 +64,7 @@ Item {
 
 
         Button {
-            text: "Generate video file"
+            text: "Generate video output"
             width: 200
             onClicked: videoEncoder.generate();
             enabled: imagesCount>0
@@ -93,6 +93,7 @@ Item {
                     width: 100
                     height: 100
                     id: imga
+                    css.pointerEvents: "all";
                     Component.onCompleted: {
                         //imga.dom.children[0].style.height = "";
                     }
@@ -101,8 +102,7 @@ Item {
         } // flow
 
         Column { // encoding
-            width: parent.width/2
-
+            width: parent.width/2 - 40
 
             TabView {
                 id: encoders
@@ -132,18 +132,39 @@ Item {
                 }
             }
 
+            Text {
+              text: "To save result, right-click on it and select 'Save as'"
+              font.pixelSize:15
+              z: 1000
+              height: 40
+            }
+
             Video {
                 visible: outputIsVideo
                 source: outputObjectUrl || ""
                 width: parent.width
-                height: Math.max( 200, maker.height-250 )
+                height: Math.max( 200, maker.height-350 )
                 autoPlay: true
                 controls: true
             }
+            
+            Image {
+                width: parent.width
+                height: Math.max( 200, maker.height-350 )
+                visible: !outputIsVideo
+                source: outputObjectUrl || ""
+                id: rimga
+                css.pointerEvents: "all";
 
-            Text {
-              text: "To save result, right-click on it and select 'Save as'"
+                Component.onCompleted: {
+                  rimga.dom.children[0].style.height = "";
+                  rimga.dom.children[0].style.border = "1px solid grey";
+                }
             }
+
+
+
+
 
         } // encoding column
 

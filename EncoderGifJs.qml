@@ -3,12 +3,14 @@ Column {
     //    anchors.fill: parent
     //    color: "grey"
     spacing: 5
+    property var outputIsVideo: false
 
     JsLoader {
         //source: Qt.resolvedUrl( "whammy-master/whammy.js" )
-        source: "http://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.js"
+        source: Qt.resolvedUrl( "gif.js-master/dist/gif.js" )
         onLoaded: console.log("loaded gif.js");
     }
+    property var workerPath: Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
 
     Text {
         text: "Gif Frames per second:"
@@ -51,7 +53,7 @@ Column {
 				  quality: 10,
 				  width: w,
 				  height: h,
-				  workerScript: "http://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.worker.js"
+				  workerScript: workerPath
 				});
         
 
@@ -74,7 +76,7 @@ Column {
 				gif.on('finished', function(blob) {
 				  outputBlob = blob;
 				  outputIsVideo = false;
-				  console.log("finished");
+				  console.log("so finished");
 				  //window.open(URL.createObjectURL(blob));
 				});        
         gif.render();

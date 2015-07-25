@@ -2,6 +2,7 @@ Column {
     //    anchors.fill: parent
     //    color: "grey"
     spacing: 5
+    property var outputIsVideo: true
 
     JsLoader {
         //source: Qt.resolvedUrl( "whammy-master/whammy.js" )
