@@ -162,10 +162,6 @@ Item {
                 }
             }
 
-
-
-
-
         } // encoding column
 
     } // grid
