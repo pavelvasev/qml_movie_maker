@@ -82,10 +82,14 @@ Column {
 				gif.on('finished', function(blob) {
 				  outputBlob = blob;
 				  outputIsVideo = false;
-				  console.log("so finished");
+				  console.log("so finished !!");
 				  renderProgress = 1;
 				  //window.open(URL.createObjectURL(blob));
 				});        
+				gif.on('progress', function(progress) {				
+				  // console.log("got progress!!!!!!!!!!!!!!!",progress);
+  				renderProgress = progress;
+  			});
 
   		  renderProgress = 0;				
         gif.render();

@@ -195,7 +195,8 @@ Item {
             }
 
             ProgressBar {
-                intermediate: true
+                intermediate: renderProgress < 0.001
+                value: renderProgress
                 visible: renderProgress < 1
             }
 
