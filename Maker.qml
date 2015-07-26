@@ -20,6 +20,7 @@ Item {
 
     property var imagesCount: 0
     property var videoEncoder
+    property var renderProgress: 1
 
     function getImageObject( index ) {
         var qmlimg = imgRep.itemAt(index);
@@ -50,10 +51,31 @@ Item {
     function appendDataUrl( dataurl )
     {
         imagesCount = imagesCount+1;
-        var img = getImageObject( i );
-        img.src = ee.target.result;
+        var img = getImageObject( imagesCount-1 );
+        img.src = dataurl;
     }
-    
+
+    function finish() {
+        console.log("got finish command, generating.")
+        videoEncoder.generate();
+    }
+
+    // ********************* window messages
+    function initWindowMessages() {
+        window.addEventListener("message", receiveMessage, false);
+    }
+    // call cmd as raw func
+    function receiveMessage(event) {
+        var cmd = event.data.cmd;
+        var args = event.data.args;
+        console.log("cmd=",cmd)
+        maker[cmd].apply( maker, args );
+        //debugger;
+    }
+
+    Component.onCompleted: {
+        initWindowMessages();
+    }
 
     // ******************** impl
 
@@ -131,7 +153,8 @@ Item {
                     id: imga
                     css.pointerEvents: "all";
                     Component.onCompleted: {
-                        //imga.dom.children[0].style.height = "";
+                        // this hack will mantain aspect ratio
+                        imga.dom.children[0].style.height = "";
                     }
                 }
             }
@@ -148,24 +171,20 @@ Item {
                 height: 100
                 width: parent.width
                 Tab {
-                    title: "WebM"
-                    //anchors.fill: parent
-                    //width: parent.width
-                    //height: parent.height
-                    //height: 150
-                    //source: "Whammy.qml"
-                    property var encoder: whammy
-                    EncoderWhammy {
-                        id: whammy
-                    }
-                }
-                Tab {
                     title: "Gif"
                     property var encoder: gif
                     EncoderGifJs {
                         id: gif
                     }
                 }
+                Tab {
+                    title: "WebM"
+                    property var encoder: whammy
+                    EncoderWhammy {
+                        id: whammy
+                    }
+                }
+                
             }
 
             Text {
@@ -173,6 +192,11 @@ Item {
                 font.pixelSize:15
                 z: 1000
                 height: 40
+            }
+
+            ProgressBar {
+                intermediate: true
+                visible: renderProgress < 1
             }
 
             Video {

@@ -83,9 +83,13 @@ Column {
 				  outputBlob = blob;
 				  outputIsVideo = false;
 				  console.log("so finished");
+				  renderProgress = 1;
 				  //window.open(URL.createObjectURL(blob));
 				});        
+
+  		  renderProgress = 0;				
         gif.render();
+        
         
         //outputBlob = encoder.compile();
         

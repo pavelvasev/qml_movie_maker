@@ -35,6 +35,11 @@ Column {
     property var video: true
 
     function generate() {
+      renderProgress = 0;
+      setTimeout( do_generate,200 );
+    }
+
+    function do_generate() {
         //      debugger;
         var total = imagesCount;
         console.log("adding");
@@ -69,8 +74,10 @@ Column {
         } // for
         console.log("generating");
         outputBlob = encoder.compile();
+        renderProgress = 1;
         outputIsVideo = true;
         console.log("finished");
+
         /*
       var url = window.URL.createObjectURL(output);
       console.log("showing");
