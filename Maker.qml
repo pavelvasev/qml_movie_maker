@@ -46,6 +46,13 @@ Item {
         imagesCount = imagesCount+1;
         loadFile( imagesCount-1, file );
     }
+
+    function appendDataUrl( dataurl )
+    {
+        imagesCount = imagesCount+1;
+        var img = getImageObject( i );
+        img.src = ee.target.result;
+    }
     
 
     // ******************** impl
@@ -85,7 +92,7 @@ Item {
 
                 imagesCount = files.length;
                 for (var i=0; i<files.length; i++)
-                    load(i, files[i]);
+                    loadFile(i, files[i]);
             }
 
         } // fileselect
