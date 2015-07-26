@@ -13,10 +13,12 @@ Column {
         
         onLoaded: console.log("loaded gif.js");
     }
-    property var workerPath: Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
+    //property var workerPath: Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
     // may apply for ugly hack and use this link 
     // http://pavelvasev.github.io/simple_movie_maker/gif.js-master/dist/gif.worker.js
-    // which allows to run maker from qmlweb.ru
+    // which allows to run maker from qmlweb.run
+    // OK so we use hack.
+    property var workerPath: window.location.host.indexOf("github.io") >= 0 ? "/simple_movie_maker/gif.js-master/dist/gif.worker.js" : Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
 
     Text {
         text: "Gif Frames per second:"
