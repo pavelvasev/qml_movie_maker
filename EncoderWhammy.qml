@@ -1,3 +1,4 @@
+// uses https://github.com/antimatter15/whammy
 Column {
     //    anchors.fill: parent
     //    color: "grey"

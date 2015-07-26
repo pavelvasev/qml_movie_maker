@@ -1,3 +1,4 @@
+// uses https://github.com/jnordberg/gif.js
 Column {
     id: enc
     //    anchors.fill: parent
@@ -13,6 +14,9 @@ Column {
         onLoaded: console.log("loaded gif.js");
     }
     property var workerPath: Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
+    // may apply for ugly hack and use this link 
+    // http://pavelvasev.github.io/simple_movie_maker/gif.js-master/dist/gif.worker.js
+    // which allows to run maker from qmlweb.ru
 
     Text {
         text: "Gif Frames per second:"

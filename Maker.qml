@@ -27,7 +27,44 @@ Item {
         return qmlimg.dom.children[0];
     }
 
+    function clear() {
+        imagesCount = 0;
+    }
+    function reset() { clear(); }
+
+    function loadFile( i, file )
+    {
+        var reader = new FileReader();
+        reader.onload = function(ee) {
+            var img = getImageObject( i );
+            img.src = ee.target.result;
+        }
+        reader.readAsDataURL( file );
+    }
+
+    function appendFile( file ) {
+        imagesCount = imagesCount+1;
+        loadFile( imagesCount-1, file );
+    }
+    
+
     // ******************** impl
+
+
+    Text {
+        text: "Select image files or drop them here. Then press 'generate video'."
+        anchors.fill: flow
+        visible: imagesCount == 0
+    }
+
+    FileDrop {
+        dropZone: flow
+        onFilesChanged: {
+            maker.reset();
+            for (var i=0; i<files.length; i++)
+                maker.appendFile( files[i] );
+        }
+    }
 
     Grid {
         y: 37
@@ -38,6 +75,7 @@ Item {
         rows: 2
         id: grid
         spacing: 20
+        //css.border: "1px solid red";
 
         FileSelect {
             id: imgas
@@ -50,15 +88,6 @@ Item {
                     load(i, files[i]);
             }
 
-            function load( i, file )
-            {
-                var reader = new FileReader();
-                reader.onload = function(ee) {
-                    var img = getImageObject( i );
-                    img.src = ee.target.result;
-                }
-                reader.readAsDataURL( file );
-            }
         } // fileselect
 
 
@@ -70,21 +99,21 @@ Item {
             enabled: imagesCount>0
         }
 
-/*        Text {
+        /*        Text {
             text: "Generate output"
         }
 */
 
         Flow {
             width: maker.width/2
-            height: maker.height
+            height: maker.height - 100
             spacing: 2
             id: flow
 
             css.overflowY: "auto";
             css.overflowX: "hidden";
             css.pointerEvents: "all";
-            //css.border: "1px solid grey";
+           // css.border: "1px dashed grey";
 
             Repeater {
                 id: imgRep
@@ -112,7 +141,7 @@ Item {
                 height: 100
                 width: parent.width
                 Tab {
-                    title: "WebP"
+                    title: "WebM"
                     //anchors.fill: parent
                     //width: parent.width
                     //height: parent.height
@@ -133,10 +162,10 @@ Item {
             }
 
             Text {
-              text: "To save result, right-click on it and select 'Save as'"
-              font.pixelSize:15
-              z: 1000
-              height: 40
+                text: "To save result, right-click on it and select 'Save as'"
+                font.pixelSize:15
+                z: 1000
+                height: 40
             }
 
             Video {
@@ -157,8 +186,8 @@ Item {
                 css.pointerEvents: "all";
 
                 Component.onCompleted: {
-                  rimga.dom.children[0].style.height = "";
-                  rimga.dom.children[0].style.border = "1px solid grey";
+                    rimga.dom.children[0].style.height = "";
+                    rimga.dom.children[0].style.border = "1px solid grey";
                 }
             }
 

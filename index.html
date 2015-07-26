@@ -54,7 +54,7 @@
     <body>
 
     <div id="qmlSpace">Place for Qml scene</div>
-    <div id="qmlSrcLink"><a target="_blank" href="">open source</a></div>
+    <div id="qmlSrcLink"><a target="_blank" href="https://github.com/pavelvasev/simple_movie_maker">project on github</a></div>
     <div id="qmlRunLink"><a target="_blank" href="javascript:window.location.href = window.location.href.split('?')[0];">simple_movie_maker</a></div>    
 
 <!--    
@@ -81,7 +81,7 @@
     //  qmlEngine.addImportPath(""); // for now we have to point to import dir directly 
 
     var src = getParameterByName("s","--") || getParameterByName("s") || "Maker.qml";
-    jQuery("#qmlSrcLink a").attr("href",src);
+    // jQuery("#qmlSrcLink a").attr("href",src);
     
     try {
       qmlEngine.loadFile( src );
