@@ -7,8 +7,8 @@ Column {
 
     JsLoader {
         //source: Qt.resolvedUrl( "whammy-master/whammy.js" )
-        //source: Qt.resolvedUrl( "gif.js-master/dist/gif.js" )
-        source: "https://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.js"
+        source: Qt.resolvedUrl( "gif.js-master/dist/gif.js" )
+        //source: "https://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.js"
         
         onLoaded: console.log("loaded gif.js");
     }
