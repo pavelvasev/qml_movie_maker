@@ -8,8 +8,10 @@ Column {
 
     JsLoader {
         //source: Qt.resolvedUrl( "whammy-master/whammy.js" )
-        source: Qt.resolvedUrl( "gif.js-master/dist/gif.js" )
-        //source: "https://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.js"
+        //source: Qt.resolvedUrl( "gif.js-master/dist/gif.js" )
+        //this is hack too
+        source: "https://pavelvasev.github.io/simple_movie_maker/gif.js-master/dist/gif.js"
+        // https://cdn.rawgit.com/jnordberg/gif.js/master/dist/gif.js"
         
         onLoaded: console.log("loaded gif.js");
     }
@@ -19,9 +21,9 @@ Column {
     // which allows to run maker from qmlweb.run
     // OK so we use hack.
     property var workerPath: {
-      if (window.location.host.indexOf("github.io") >= 0)
+      if (window.location.host.indexOf(".github.io") >= 0)
       {
-        return window.location.protocol + "//pavelvasev.github.io/simple_movie_maker/gif.js-master/dist/gif.worker.js";
+        return window.location.protocol + "//" + window.location.host + "/simple_movie_maker/gif.js-master/dist/gif.worker.js";
       }
       return Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
     }
