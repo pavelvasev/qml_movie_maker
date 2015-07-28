@@ -72,6 +72,7 @@ Item {
         reader.onload = function(ee) {
             var img = getImageObject( i );
             img.src = ee.target.result;
+            //adjustSize(i);
         }
         reader.readAsDataURL( file );
     }
@@ -86,6 +87,7 @@ Item {
         imagesCount = imagesCount+1;
         var img = getImageObject( imagesCount-1 );
         img.src = dataurl;
+        //adjustSize(imagesCount-1);
     }
 
     function finish() {
@@ -93,7 +95,17 @@ Item {
         videoEncoder.generate();
     }
 
+    function adjustHeight(i) {
+        var qmlimg = imgRep.itemAt(i);
+        if (!qmlimg) return 100;
 
+        var img = getImageObject( i );
+        var screenW = qmlimg.width; // то что задали на экране после слайдера
+        var natW = img.naturalWidth; // исходное
+        var ratio = screenW / natW; // соотношение экран/исходное
+        qmlimg.height = qmlimg.naturalH * ratio; // naturalH will be updated upon image load
+    }
+    
     // ********************* window messages
     function initWindowMessages() {
         window.addEventListener("message", receiveMessage, false);
@@ -130,6 +142,15 @@ Item {
             for (var i=0; i<files.length; i++)
                 maker.appendFile( files[i] );
         }
+    }
+
+    Slider {
+      anchors.bottom: flow.bottom
+      anchors.right: flow.right
+      z: 5
+      id: imgSizeSlider
+      value: 0.25
+      minimumValue: 0.2
     }
 
     Grid {
@@ -173,7 +194,7 @@ Item {
         Flow {
             width: maker.width/2
             height: maker.height - 100
-            spacing: 2
+            spacing: 2 + 7*imgSizeSlider.value  
             id: flow
 
             css.overflowY: "auto";
@@ -185,13 +206,18 @@ Item {
                 id: imgRep
                 model: imagesCount
                 Image {
-                    width: 100
-                    height: 100
+                    width: maker.width * 0.47 * imgSizeSlider.value
+                    height: adjustHeight( index );
+                    property var naturalH: 100
+                    onWidthChanged: adjustHeight(index);
+                    onNaturalHChanged: adjustHeight(index);
+                    
                     id: imga
                     css.pointerEvents: "all";
                     Component.onCompleted: {
                         // this hack will mantain aspect ratio
                         imga.dom.children[0].style.height = "";
+                        imga.dom.children[0].onload = function() { naturalH = imga.dom.children[0].naturalHeight; } 
                     }
                 }
             }
