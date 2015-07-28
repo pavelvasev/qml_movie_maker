@@ -5,6 +5,7 @@ Column {
     //    color: "grey"
     spacing: 5
     property var outputIsVideo: false
+    property var outputFileExt: "gif"
 
     JsLoader {
         //source: Qt.resolvedUrl( "whammy-master/whammy.js" )
@@ -16,16 +17,16 @@ Column {
         onLoaded: console.log("loaded gif.js");
     }
     //property var workerPath: Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
-    // may apply for ugly hack and use this link 
+    // may apply for ugly hack and use this link
     // http://pavelvasev.github.io/simple_movie_maker/gif.js-master/dist/gif.worker.js
     // which allows to run maker from qmlweb.run
     // OK so we use hack.
     property var workerPath: {
-      if (window.location.host.indexOf(".github.io") >= 0)
-      {
-        return window.location.protocol + "//" + window.location.host + "/simple_movie_maker/gif.js-master/dist/gif.worker.js";
-      }
-      return Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
+        if (window.location.host.indexOf(".github.io") >= 0)
+        {
+            return window.location.protocol + "//" + window.location.host + "/simple_movie_maker/gif.js-master/dist/gif.worker.js";
+        }
+        return Qt.resolvedUrl( "gif.js-master/dist/gif.worker.js" )
     }
 
     Text {
@@ -65,12 +66,12 @@ Column {
         var delay = 1000/afps;
 
         var gif = new GIF({
-				  workers: 2,
-				  quality: 10,
-				  width: w,
-				  height: h,
-				  workerScript: workerPath
-				});
+                              workers: 2,
+                              quality: 10,
+                              width: w,
+                              height: h,
+                              workerScript: workerPath
+                          });
         
 
         for (var i=0 ;i<total; i++) {
@@ -88,31 +89,19 @@ Column {
             gif.addFrame( ctx, {delay: delay} );
             
         } // for
-        console.log("generating gif");
-				gif.on('finished', function(blob) {
-				  outputBlob = blob;
-				  outputIsVideo = false;
-				  console.log("so finished !!");
-				  renderProgress = 1;
-				  //window.open(URL.createObjectURL(blob));
-				});        
-				gif.on('progress', function(progress) {				
-				  // console.log("got progress!!!!!!!!!!!!!!!",progress);
-  				renderProgress = progress;
-  			});
 
-  		  renderProgress = 0;				
+        console.log("generating gif");
+        gif.on('finished', function(blob) {
+            console.log("so finished !!");
+            renderProgress = 1;
+            maker.generated( blob, false, "gif" );
+        });
+        gif.on('progress', function(progress) {
+            renderProgress = progress;
+        });
+
+        renderProgress = 0;
         gif.render();
-        
-        
-        //outputBlob = encoder.compile();
-        
-        
-        /*
-      var url = window.URL.createObjectURL(output);
-      console.log("showing");
-      window.open(url);
-      */
-    }
+    } // generate func
 
 }

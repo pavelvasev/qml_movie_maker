@@ -8,6 +8,6 @@ Run via qmlweb.run: http://pavelvasev.github.io/qmlweb.run/?s=https%3A%2F%2Fgith
 ### todo
 
 * download all source files as zip
-* optimize memory 
+* optimize memory, including revokeObjectURL().
 
 2015 (c) Pavel Vasev

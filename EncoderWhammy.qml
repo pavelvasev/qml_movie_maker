@@ -4,6 +4,7 @@ Column {
     //    color: "grey"
     spacing: 5
     property var outputIsVideo: true
+    property var outputFileExt: "webm"
 
     JsLoader {
         //source: Qt.resolvedUrl( "whammy-master/whammy.js" )
@@ -19,24 +20,12 @@ Column {
         id: fps
         text: "10"
     }
-
-    /*
-    Button {
-            text: "Generate video file"
-            width: 200
-            onClicked: generate();
-            enabled: imagesCount>0
-    }
-*/    
-
     
-    //    property var outputBlob: null
-    //    property var outputObjectUrl: outputBlob ? window.URL.createObjectURL(outputBlob) : null;
     property var video: true
 
     function generate() {
-      renderProgress = 0;
-      setTimeout( do_generate,200 );
+        renderProgress = 0;
+        setTimeout( do_generate,200 ); // have to use timeout to update gui
     }
 
     function do_generate() {
@@ -52,8 +41,6 @@ Column {
             var img = getImageObject( i );
 
             var canvas = document.createElement("canvas");
-            //canvas.width = img.naturalWidth;
-            //canvas.height = img.naturalHeight;
             canvas.width = w;
             canvas.height = h;
 
@@ -61,28 +48,14 @@ Column {
             var ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0);
             encoder.add( ctx );
-
-            /*
-
-            if ((/^data:image/ig).test(img.src))
-          encoder.add( img.src );
-        else {
-          console.log("skip ",i);
-        }
-        */
-
         } // for
+
         console.log("generating");
-        outputBlob = encoder.compile();
-        renderProgress = 1;
-        outputIsVideo = true;
+        var blob = encoder.compile();
         console.log("finished");
 
-        /*
-      var url = window.URL.createObjectURL(output);
-      console.log("showing");
-      window.open(url);
-      */
+        renderProgress = 1;
+        maker.generated( blob,true,"webm");
     }
 
 }

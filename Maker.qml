@@ -12,27 +12,60 @@ Item {
         font.pixelSize:15
     }
 
-    // ******************** api
-
-    property var outputBlob
-    property var outputObjectUrl: outputBlob ? window.URL.createObjectURL(outputBlob) : null;
-    property var outputIsVideo: videoEncoder.outputIsVideo
-
-    property var imagesCount: 0
-    property var videoEncoder
-    property var renderProgress: 1
-
+    // ********************** encoders interop
+ 
+    // used by encoders
     function getImageObject( index ) {
         var qmlimg = imgRep.itemAt(index);
         if (!qmlimg) return {};
         return qmlimg.dom.children[0];
     }
 
+    // sent by encoders on work finish
+    signal generated( object blob, bool isvideo, string ext );
+    
+    onGenerated: {
+      outputBlob = blob;
+      outputIsVideo = isvideo;
+      outputFileExt = ext;
+      outputTime = resetTime;
+    }
+
+    // ********************* program state
+    
+    property var outputBlob
+    property var outputObjectUrl: outputBlob ? window.URL.createObjectURL(outputBlob) : null;
+    property var outputIsVideo: false
+    property var outputFileExt
+    property var outputFilePrefix: "animation"
+
+    property var outputTime: { return new Date(); }
+    property var resetTime: { return new Date(); }
+
+    property var outputFileName: {
+      function pad(num) {
+        var s = "000000000" + num;
+        return s.substr(s.length-2);
+      }
+      //var d = new Date();
+      var d = outputTime;
+      //var f = d.getFullYear() + "-" + pad(1+d.getMonth()) + "-" + pad(d.getDate()) + "-" + pad(d.getHours()) + "-" + pad(d.getMinutes()) + "-" + pad(d.getSeconds());
+      var f = d.getFullYear() + "" + pad(1+d.getMonth()) + "" + pad(d.getDate()) + "-" + pad(d.getHours()) + "" + pad(d.getMinutes()) + "-" + pad(d.getSeconds());
+      return outputFilePrefix + "-" + f + "." + outputFileExt;
+    }
+    
+    property var imagesCount: 0
+    property var videoEncoder
+    property var renderProgress: 1
+
+    // ******************** api
+    
     function clear() {
         imagesCount = 0;
+        resetTime = new Date();
     }
     function reset() { clear(); }
-
+    
     function loadFile( i, file )
     {
         var reader = new FileReader();
@@ -60,6 +93,7 @@ Item {
         videoEncoder.generate();
     }
 
+
     // ********************* window messages
     function initWindowMessages() {
         window.addEventListener("message", receiveMessage, false);
@@ -75,9 +109,12 @@ Item {
 
     Component.onCompleted: {
         initWindowMessages();
+        maker.widthChanged();
+        maker.heightChanged();
+        encColumn.layoutChildren(); // hack
     }
 
-    // ******************** impl
+    // ******************** gui
 
 
     Text {
@@ -111,7 +148,7 @@ Item {
             multiple: true
             onFilesChanged: {
                 //console.log("new files=",files);
-
+                maker.reset();
                 imagesCount = files.length;
                 for (var i=0; i<files.length; i++)
                     loadFile(i, files[i]);
@@ -161,8 +198,8 @@ Item {
         } // flow
 
         Column { // encoding
-            width: parent.width/2 - 40
-
+            id: encColumn
+            
             TabView {
                 id: encoders
                 property var currentTab: getTab( currentIndex )
@@ -170,6 +207,8 @@ Item {
                 //height: 30 + (currentTab ? currentTab.height : 0)
                 height: 100
                 width: parent.width
+                //width: maker.width/2 - 60
+
                 Tab {
                     title: "Gif"
                     property var encoder: gif
@@ -188,14 +227,17 @@ Item {
             }
 
             Text {
-                text: "To save result, right-click on it and select 'Save as'"
+                //text: "To save result "+ outputFileExt+", click <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >here</a>."
+                //text: "Click to save <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >result " + outputFileName + "</a>."
+                text: "Click to save <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >" + outputFileName + "</a>"
                 font.pixelSize:15
                 z: 1000
                 height: 40
+                visible: outputBlob
             }
 
             ProgressBar {
-                intermediate: renderProgress < 0.001
+                indeterminate: renderProgress < 0.001
                 value: renderProgress
                 visible: renderProgress < 1
             }
@@ -203,14 +245,16 @@ Item {
             Video {
                 visible: outputIsVideo
                 source: outputObjectUrl || ""
-                width: parent.width
+                //width: parent.width
+                width: maker.width*0.4
                 height: Math.max( 200, maker.height-350 )
                 autoPlay: true
                 controls: true
             }
             
             Image {
-                width: parent.width
+                //width: parent.width
+                width: maker.width*0.4
                 height: Math.max( 200, maker.height-350 )
                 visible: !outputIsVideo
                 source: outputObjectUrl || ""
@@ -222,7 +266,7 @@ Item {
                     rimga.dom.children[0].style.border = "1px solid grey";
                 }
             }
-
+            
         } // encoding column
 
     } // grid
