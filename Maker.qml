@@ -147,6 +147,7 @@ Item {
     Slider {
       anchors.bottom: flow.bottom
       anchors.right: flow.right
+      anchors.rightMargin: 30
       z: 5
       id: imgSizeSlider
       value: 0.25

@@ -9,5 +9,7 @@ Run via qmlweb.run: http://pavelvasev.github.io/qmlweb.run/?s=https%3A%2F%2Fgith
 
 * download all source files as zip
 * optimize memory, including revokeObjectURL().
+* accept "string annotation" parameter via postMessage.
+this will allow to add things like "t=10"
 
 2015 (c) Pavel Vasev
