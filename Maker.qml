@@ -136,6 +136,7 @@ Item {
         visible: imagesCount == 0
     }
 
+
     FileDrop {
         dropZone: flow
         onFilesChanged: {
@@ -166,6 +167,8 @@ Item {
         spacing: 20
         //css.border: "1px solid red";
 
+        Row {
+
         FileSelect {
             id: imgas
             multiple: true
@@ -178,6 +181,13 @@ Item {
             }
 
         } // fileselect
+
+    Text {
+        y: 3
+        text: "Images count: " + imagesCount
+    }
+
+    }
 
 
 
