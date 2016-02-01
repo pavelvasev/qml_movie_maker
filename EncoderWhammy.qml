@@ -50,12 +50,12 @@ Column {
             encoder.add( ctx );
         } // for
 
-        console.log("generating");
-        var blob = encoder.compile();
-        console.log("finished");
+        console.log("generating"); renderProgress = 1;
 
-        renderProgress = 1;
-        maker.generated( blob,true,"webm");
+        encoder.compile( false, function(blob) {
+          console.log("finished");
+          maker.generated( blob,true,"webm");
+        });
     }
 
 }

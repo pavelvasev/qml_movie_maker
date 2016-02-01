@@ -85,7 +85,11 @@ Column {
 
             // Copy the image contents to the canvas
             var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
+            try {
+              ctx.drawImage(img, 0, 0);
+            } catch (msg) {
+              console.log( msg );
+            }
             gif.addFrame( ctx, {delay: delay} );
             
         } // for
