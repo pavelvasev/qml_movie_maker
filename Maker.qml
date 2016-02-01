@@ -22,11 +22,11 @@ Item {
     }
 
     // sent by encoders on work finish
-    signal generated( object blob, bool isvideo, string ext );
+    signal generated( object blob, string type, string ext );
     
     onGenerated: {
       outputBlob = blob;
-      outputIsVideo = isvideo;
+      outputType = type;
       outputFileExt = ext;
       outputTime = resetTime;
     }
@@ -35,7 +35,7 @@ Item {
     
     property var outputBlob
     property var outputObjectUrl: outputBlob ? window.URL.createObjectURL(outputBlob) : null;
-    property var outputIsVideo: false
+    property var outputType: "nothing"
     property var outputFileExt
     property var outputFilePrefix: "animation"
 
@@ -244,7 +244,8 @@ Item {
                 onCurrentTabChanged: videoEncoder = currentTab.encoder;
                 //height: 30 + (currentTab ? currentTab.height : 0)
                 height: 100
-                width: parent.width
+                width: 250
+                ///?width: parent.width
                 //width: maker.width/2 - 60
 
                 Tab {
@@ -259,6 +260,14 @@ Item {
                     property var encoder: whammy
                     EncoderWhammy {
                         id: whammy
+                    }
+                }
+
+                Tab {
+                    title: "Zip"
+                    property var encoder: ezip
+                    EncoderZip  {
+                        id: ezip
                     }
                 }
                 
@@ -281,7 +290,7 @@ Item {
             }
 
             Video {
-                visible: outputIsVideo
+                visible: outputType == "video"
                 source: outputObjectUrl || ""
                 //width: parent.width
                 width: maker.width*0.4
@@ -294,7 +303,7 @@ Item {
                 //width: parent.width
                 width: maker.width*0.4
                 height: Math.max( 200, maker.height-350 )
-                visible: !outputIsVideo
+                visible: outputType == "image"
                 source: outputObjectUrl || ""
                 id: rimga
                 css.pointerEvents: "all";

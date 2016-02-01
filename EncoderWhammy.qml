@@ -54,7 +54,7 @@ Column {
 
         encoder.compile( false, function(blob) {
           console.log("finished");
-          maker.generated( blob,true,"webm");
+          maker.generated( blob,"video","webm");
         });
     }
 

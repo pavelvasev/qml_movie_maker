@@ -98,7 +98,7 @@ Column {
         gif.on('finished', function(blob) {
             console.log("so finished !!");
             renderProgress = 1;
-            maker.generated( blob, false, "gif" );
+            maker.generated( blob, "image", "gif" );
         });
         gif.on('progress', function(progress) {
             renderProgress = progress;
