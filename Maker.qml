@@ -130,8 +130,9 @@ Item {
 
 
     Text {
-        text: "Select image files or drop them here. Then press 'generate video'."
+        text: "Choose image files or drop them here. Then press 'generate video output'."
         anchors.fill: flow
+        anchors.margins: 10
         visible: imagesCount == 0
     }
 
@@ -201,7 +202,7 @@ Item {
             css.overflowY: "auto";
             css.overflowX: "hidden";
             css.pointerEvents: "all";
-           // css.border: "1px dashed grey";
+            css.border: "1px dashed grey";
 
             Repeater {
                 id: imgRep

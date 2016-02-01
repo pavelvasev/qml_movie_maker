@@ -1,3 +1,7 @@
+// Monitors dropZone object for file drop events
+// Fires `drop` event when drop occurs
+// Has `files` property with dropped files
+
 Rectangle {
   id: rect
   property var dropZone: rect
@@ -9,6 +13,7 @@ Rectangle {
   signal drop();
 
   Component.onCompleted: {
+
     // actual work
     dropZone.dom.addEventListener('dragover', handleDragOver, false);
     dropZone.dom.addEventListener('drop', handleFileSelect, false);  
@@ -41,6 +46,7 @@ Rectangle {
    property var prevBorder: "none"
 
    function dragEnter(event) {
+     prevBorder = event.target.style.border;
      event.target.style.border = "2px dashed green";
    }
 
