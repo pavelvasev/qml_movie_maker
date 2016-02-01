@@ -13,7 +13,7 @@ Item {
     }
 
     // ********************** encoders interop
- 
+
     // used by encoders
     function getImageObject( index ) {
         var qmlimg = imgRep.itemAt(index);
@@ -25,10 +25,10 @@ Item {
     signal generated( object blob, string type, string ext );
     
     onGenerated: {
-      outputBlob = blob;
-      outputType = type;
-      outputFileExt = ext;
-      outputTime = resetTime;
+        outputBlob = blob;
+        outputType = type;
+        outputFileExt = ext;
+        outputTime = resetTime;
     }
 
     // ********************* program state
@@ -43,15 +43,15 @@ Item {
     property var resetTime: { return new Date(); }
 
     property var outputFileName: {
-      function pad(num) {
-        var s = "000000000" + num;
-        return s.substr(s.length-2);
-      }
-      //var d = new Date();
-      var d = outputTime;
-      //var f = d.getFullYear() + "-" + pad(1+d.getMonth()) + "-" + pad(d.getDate()) + "-" + pad(d.getHours()) + "-" + pad(d.getMinutes()) + "-" + pad(d.getSeconds());
-      var f = d.getFullYear() + "" + pad(1+d.getMonth()) + "" + pad(d.getDate()) + "-" + pad(d.getHours()) + "" + pad(d.getMinutes()) + "-" + pad(d.getSeconds());
-      return outputFilePrefix + "-" + f + "." + outputFileExt;
+        function pad(num) {
+            var s = "000000000" + num;
+            return s.substr(s.length-2);
+        }
+        //var d = new Date();
+        var d = outputTime;
+        //var f = d.getFullYear() + "-" + pad(1+d.getMonth()) + "-" + pad(d.getDate()) + "-" + pad(d.getHours()) + "-" + pad(d.getMinutes()) + "-" + pad(d.getSeconds());
+        var f = d.getFullYear() + "" + pad(1+d.getMonth()) + "" + pad(d.getDate()) + "-" + pad(d.getHours()) + "" + pad(d.getMinutes()) + "-" + pad(d.getSeconds());
+        return outputFilePrefix + "-" + f + "." + outputFileExt;
     }
     
     property var imagesCount: 0
@@ -147,13 +147,13 @@ Item {
     }
 
     Slider {
-      anchors.bottom: flow.bottom
-      anchors.right: flow.right
-      anchors.rightMargin: 30
-      z: 5
-      id: imgSizeSlider
-      value: 0.25
-      minimumValue: 0.2
+        anchors.bottom: flow.bottom
+        anchors.right: flow.right
+        anchors.rightMargin: 30
+        z: 5
+        id: imgSizeSlider
+        value: 0.25
+        minimumValue: 0.2
     }
 
     Grid {
@@ -168,34 +168,38 @@ Item {
         //css.border: "1px solid red";
 
         Row {
+            Stepa { text: "I" }
+            FileSelect {
+                id: imgas
+                multiple: true
+                onFilesChanged: {
+                    //console.log("new files=",files);
+                    maker.reset();
+                    imagesCount = files.length;
+                    for (var i=0; i<files.length; i++)
+                        loadFile(i, files[i]);
+                }
 
-        FileSelect {
-            id: imgas
-            multiple: true
-            onFilesChanged: {
-                //console.log("new files=",files);
-                maker.reset();
-                imagesCount = files.length;
-                for (var i=0; i<files.length; i++)
-                    loadFile(i, files[i]);
+            } // fileselect
+
+            Text {
+                y: 3
+                text: "Images count: " + imagesCount
             }
 
-        } // fileselect
-
-    Text {
-        y: 3
-        text: "Images count: " + imagesCount
-    }
-
-    }
+        }
 
 
 
-        Button {
-            text: "Generate video output"
-            width: 200
-            onClicked: videoEncoder.generate();
-            enabled: imagesCount>0
+        Row {
+            Stepa { text: "II" }
+            Text {
+                text: "Choose encoder"
+                width: 200
+                y: 3
+                //onClicked: videoEncoder.generate();
+                enabled: imagesCount>0
+            }
         }
 
         /*        Text {
@@ -206,7 +210,7 @@ Item {
         Flow {
             width: maker.width/2
             height: maker.height - 100
-            spacing: 2 + 7*imgSizeSlider.value  
+            spacing: 2 + 7*imgSizeSlider.value
             id: flow
 
             css.overflowY: "auto";
@@ -229,7 +233,7 @@ Item {
                     Component.onCompleted: {
                         // this hack will mantain aspect ratio
                         imga.dom.children[0].style.height = "";
-                        imga.dom.children[0].onload = function() { naturalH = imga.dom.children[0].naturalHeight; } 
+                        imga.dom.children[0].onload = function() { naturalH = imga.dom.children[0].naturalHeight; }
                     }
                 }
             }
@@ -237,6 +241,7 @@ Item {
 
         Column { // encoding
             id: encColumn
+            spacing: 10
             
             TabView {
                 id: encoders
@@ -273,14 +278,16 @@ Item {
                 
             }
 
-            Text {
-                //text: "To save result "+ outputFileExt+", click <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >here</a>."
-                //text: "Click to save <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >result " + outputFileName + "</a>."
-                text: "Click to save <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >" + outputFileName + "</a>"
-                font.pixelSize:15
-                z: 1000
-                height: 40
-                visible: outputBlob
+
+            Row {
+                Stepa { text: "III" }
+
+                Button {
+                    text: "Generate video output"
+                    width: 200
+                    onClicked: videoEncoder.generate();
+                    enabled: imagesCount>0
+                }
             }
 
             ProgressBar {
@@ -288,6 +295,25 @@ Item {
                 value: renderProgress
                 visible: renderProgress < 1
             }
+
+/*
+            Row {
+                Stepa { text: "IV" }
+                Text { text: "Get output" }
+            }
+*/
+
+            Text { text: " " }
+            Text {
+                //text: "To save result "+ outputFileExt+", click <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >here</a>."
+                //text: "Click to save <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >result " + outputFileName + "</a>."
+                text: "Download <a href='"+maker.outputObjectUrl+"' download='"+ outputFileName +"' >" + outputFileName + "</a>"
+                font.pixelSize:15
+                z: 1000
+                //height: 40
+                visible: outputBlob
+            }
+
 
             Video {
                 visible: outputType == "video"
