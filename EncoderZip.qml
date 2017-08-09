@@ -6,7 +6,8 @@ Column {
     spacing: 5
 
     JsLoader {
-        source: "https://cdn.rawgit.com/Stuk/jszip/master/dist/jszip.js"
+        source: Qt.resolvedUrl( "jszip.js" )
+        //source: "https://cdn.rawgit.com/Stuk/jszip/master/dist/jszip.js"
         // https://github.com/Stuk/jszip/blob/master/dist/jszip.js
         onLoaded: console.log("loaded jszip.js");
     }
