@@ -313,7 +313,14 @@ Item {
                 //height: 40
                 visible: outputBlob
             }
-
+            
+            Text {
+                text: "<a href='http://showtime.lact.in/see/visual' target='_blank' >upload to showtime</a>"
+                font.pixelSize:15
+                z: 1000
+                //height: 40
+                visible: outputBlob
+            }
 
             Video {
                 visible: outputType == "video"
