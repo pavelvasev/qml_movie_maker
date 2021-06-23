@@ -23,14 +23,14 @@ Column {
     
     property var video: true
 
-    function generate() {
+    function generate(images) {
         renderProgress = 0;
-        setTimeout( do_generate,200 ); // have to use timeout to update gui
+        setTimeout( function() { do_generate(images) },200 ); // have to use timeout to update gui
     }
 
-    function do_generate() {
+    function do_generate(images) {
         //      debugger;
-        var total = imagesCount;
+        var total = images.length;
         console.log("adding");
         var encoder = new Whammy.Video(parseInt( fps.text ));
         var firstImg = getImageObject( 0 );
@@ -38,7 +38,7 @@ Column {
         var h = firstImg.naturalHeight;
 
         for (var i=0 ;i<total; i++) {
-            var img = getImageObject( i );
+            var img = images[i];
 
             var canvas = document.createElement("canvas");
             canvas.width = w;

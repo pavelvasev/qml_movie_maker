@@ -52,13 +52,13 @@ Column {
     //    property var outputObjectUrl: outputBlob ? window.URL.createObjectURL(outputBlob) : null;
     property var video: true
 
-    function generate() {
+    function generate(images) {
         //      debugger;
-        var total = imagesCount;
+        var total = images.length;
         console.log("adding to gif");
 
 
-        var firstImg = getImageObject( 0 );
+        var firstImg = images[0];
         var w = firstImg.naturalWidth;
         var h = firstImg.naturalHeight;
 
@@ -75,7 +75,7 @@ Column {
         
 
         for (var i=0 ;i<total; i++) {
-            var img = getImageObject( i );
+            var img = images[i];
             
             var canvas = document.createElement("canvas");
             //canvas.width = img.naturalWidth;
@@ -91,7 +91,7 @@ Column {
               console.log( msg );
             }
             gif.addFrame( ctx, {delay: delay} );
-            
+            //maker.preview( img );
         } // for
 
         console.log("generating gif");

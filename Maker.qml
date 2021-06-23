@@ -67,7 +67,10 @@ Item {
 //        if (videoEncoder.reset)
 //            videoEncoder.reset();
     }
-    function reset() { clear(); }
+    function reset() {
+      clear();
+      return Promise.resolve();
+    }
     
     function loadFile( i, file )
     {
@@ -108,13 +111,66 @@ Item {
           cb();
         }
     }
+    
+    function append( array )
+    {
+      if (!Array.isArray( array )) array = [array];
+    
+      res = videoEncoder.append && videoEncoder.append( array );
+      if (res) return res;
+      
+      array.forEach( function(item) {
+        imagesCount = imagesCount+1;
+        var img = getImageObject( imagesCount-1 );
+        importImage( img, item );
+      });
+      
+      return Promise.resolve();
+    }
+    
+    function importImage( img, item ) {
+        if (item instanceof File) {
+          var reader = new FileReader();
+          reader.onload = function(ee) {
+              img.src = ee.target.result;
+          }
+          reader.readAsDataURL( item );
+          return;
+        }
+        
+        if (item instanceof Blob) {
+          item = URL.createObjectURL( item );
+        }
+
+        if (item instanceof Image) {
+          item = item.src;
+        }
+        
+        if (typeof(item) === "string") { // think this is url/dataurl
+          img.src = item;
+        }
+    }
 
     function finish( cb ) {
         console.log("got finish command, generating.")
-        videoEncoder.generate();
+        generate();
         cb();
+        return Promise.resolve();
     }
+    
+    function generate() {
+        console.log("got generate command, generating.")
+        
+        var images=[];
+        var total = imagesCount;
+        for (var i=0;i<total; i++) {
+            var img = getImageObject( i );
+            images.push(img);
+        }
 
+        videoEncoder.generate(images);
+    }
+    
     function adjustHeight(i) {
         var qmlimg = imgRep.itemAt(i);
         if (!qmlimg) return 100;
@@ -140,13 +196,13 @@ Item {
           console.error("no such command");
           return;
         }
-        maker[cmd].apply( maker, args.concat([f]) );
-        //debugger;
-        function f() {
-          //event.source.window.postMessage( Object.assign( {}, event.data, {simpleMovieMackerReply: "done"} ),"*");
-          //event.source.window.postMessage( {cmd:(cmd+"Done"),ack:event.data.ack},"*");
+        
+        var promis = maker[cmd].apply( maker, args );
+        if (!promis) promis = new Promis.resolve();
+        
+        promis.then( function() {
           event.source.window.postMessage( {cmd:cmd,ack:event.data.ack},"*");
-        }
+        });
     }
 
     Component.onCompleted: {
@@ -323,7 +379,7 @@ Item {
                 Button {
                     text: "Generate video output"
                     width: 200
-                    onClicked: videoEncoder.generate();
+                    onClicked: generate()
                     enabled: imagesCount>0
                 }
             }

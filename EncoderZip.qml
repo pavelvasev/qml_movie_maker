@@ -37,16 +37,15 @@ Column {
         return s;
     }
 
-    function generate() {
-        var total = imagesCount;
+    function generate(images) {
+        var total = images.length;
         console.log("adding to zip");
 
         var zip = new JSZip();
 
         var padding = Math.ceil( Math.log10(total) );
         for (var i=0;i<total; i++) {
-            var img = getImageObject( i );
-            var imgData = getBase64Image( img );
+            var imgData = getBase64Image( images[i] );
             zip.file("image-"+pad(i,padding)+".png", imgData, {base64: true});
         }
 

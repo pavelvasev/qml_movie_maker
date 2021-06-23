@@ -31,9 +31,7 @@ Column {
         realdhandle=arg;
       });
     }
-    
 
-    
     function setdir() {
       dhandle = window.showDirectoryPicker();
       dhandle.then( function(arg) {
@@ -51,25 +49,22 @@ Column {
       fileHandle.requestPermission(opts).then( function(resp) {
         console.log("reqPerm resp=",resp );
       });
-/*      
-    
-
-      // Check if we already have permission, if so, return true.
-      if (await fileHandle.queryPermission(opts) === 'granted') {
-        return true;
-      }
-
-  // Request permission to the file, if the user grants permission, return true.
-  if (await fileHandle.requestPermission(opts) === 'granted') {
-    return true;
-  }
-
-  // The user did not grant permission, return false.
-  return false;
-*/  
-      }
+    }
 
     function getImagePngBlob(img,cb) {
+        if (img instanceof Blob)
+          return cb( img );
+        if (typeof(img) === "string") { // think this is url/dataurl
+          var newimage = new Image();
+          newimage.src = img;
+          newimage.onload = function()
+          {
+            getImagePngBlob( newimage, cb );
+          }
+          return;
+        }
+        // file?
+    
         if (img.naturalWidth == 0) {
           console.error("warning, img nat width = 0!");
           debugger;
@@ -96,35 +91,19 @@ Column {
         return s;
     }
 
-    function generate(start_i) {
-        //console.
-        
-        if (!dhandle) return; //setdir();
-        
-        dhandle.then( function(realdhandle) {
-          var images=[];
-          var total = imagesCount;
-          for (var i=0;i<total; i++) {
-              var img = getImageObject( i );
-              images.push(img);
-          }
-          imagesCount = 0;
-          saverec( start_i || 0, images, realdhandle );
-        });
-      
 
-    } // generate func
+    
+    
     
     function saverec( i, images, realdhandle, cb2 ) {
-      if (images.length == 0) return;
+      if (images.length == 0) return cb2(); // 0. call callback, 1. exit,
       
       var img = images[0];
       var padding = 5;
       var fname = "image-"+pad(i,padding)+".png";
       getImagePngBlob( img, function(blob) {
-          console.log("writing file",fname,"with blob",blob );
+          //console.log("writing file",fname,"with blob",blob );
           writefile( realdhandle, fname, blob, function() {
-            cb2();
             saverec( i+1,images.slice(1), realdhandle, cb2 );
           } );
       });
@@ -153,21 +132,34 @@ Column {
     
     //// котовасия на тему сохранения по мере поступления
     property var current_i: 0
-    //property var ic: imagesCount
-    //property var rtime: resetTime
-    //onIcChanged: generate( current_i )
-    //onRtimeChanged: restart()
-    
-    function imageAdded(img,cb) {
-      if (!realdhandle) return;
-      saverec( current_i, [img], realdhandle, cb );
-      current_i = current_i + 1;
-      imagesCount =0;
-    }
-    
+
     function restart() {
       current_i = 0;
       dhandle = null;
     }
+    
+    // input: array of things (img, blob, dataurl...)
+    // output: promise when work is done, null if work is postponed to generate stage.
+    function append( array ) {
+      if (!realdhandle) {
+        return;
+        //return maker.keep( array );
+      }
+      var orig_i = current_i;
+      current_i = current_i + array.length;
+  
+      var p = new Promise( function(resolve,reject) {
+        saverec( orig_i, array, realdhandle, resolve );
+      });
+      
+      return p;
+    }
+
+    function generate(images) {
+      if (!dhandle) return; //setdir();
+      dhandle.then( function(realdhandle) {
+        saverec( 0, images, realdhandle );
+      });
+    } // generate func    
 
 }
