@@ -29,15 +29,19 @@ recorderWindow.document.location = "https://viewzavr.com/apps/viewzavr-system-a/
 recorderWindow.postMessage( {cmd:"reset"},"*");
 ```
 
-## appendDataUrl
-Append image to session. An image should be specified in `args` key, as an array with one url.
-> idea: maybe multiple args?
-> idea: what about blobs, files?
+## append
+Append image to session. An image should be specified in `args` key which should be an array.
+Image may be an url, data url, or blob.
 
 Example:
 ```
 var img = renderer.domElement.toDataURL("image/png");
-recorderWindow.postMessage( {cmd:"appendDataUrl",args:[img],ack:subcounter},"*");
+recorderWindow.postMessage( {cmd:"append",args:[img],ack:subcounter},"*");
+```
+
+Example 2, appending many images:
+```
+recorderWindow.postMessage( {cmd:"append",args:[img1, img2, img3],ack:subcounter},"*");
 ```
 
 ## finish
@@ -65,14 +69,16 @@ function receiveMessageAck(event) {
 
 # todo and ideas
 * convert to html-based app (e.g. include qmlweb in repo).
-* add `append` method to append not urls (data urls), but say files or blobs.
-Or is it better to make another methods for these data types?
-* maybe change `append` to process many images. in that case, only 1 reply should be sent?
 * add viewer.html for output zip, to see images with some simple slider.
 * optimize memory, including revokeObjectURL().
 * accept "string annotation" parameter via postMessage.
 this will allow to add things like "t=10".
 (but probably this should be rendered right in client).
 * maybe allow user to add text annotations to all images together.
+
+# done
+* add `append` method to append not urls (data urls), but say files or blobs.
+Or is it better to make another methods for these data types?
+* maybe change `append` to process many images. in that case, only 1 reply should be sent?
 
 2015-2021 (c) Pavel Vasev
