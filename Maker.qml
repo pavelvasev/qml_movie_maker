@@ -143,7 +143,9 @@ Item {
         maker[cmd].apply( maker, args.concat([f]) );
         //debugger;
         function f() {
-          event.source.window.postMessage( {cmd:(cmd+"Done"),ack:event.data.ack},"*");
+          //event.source.window.postMessage( Object.assign( {}, event.data, {simpleMovieMackerReply: "done"} ),"*");
+          //event.source.window.postMessage( {cmd:(cmd+"Done"),ack:event.data.ack},"*");
+          event.source.window.postMessage( {cmd:cmd,ack:event.data.ack},"*");
         }
     }
 
