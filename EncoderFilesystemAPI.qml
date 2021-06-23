@@ -115,7 +115,7 @@ Column {
 
     } // generate func
     
-    function saverec( i, images, realdhandle ) {
+    function saverec( i, images, realdhandle, cb2 ) {
       if (images.length == 0) return;
       
       var img = images[0];
@@ -124,7 +124,8 @@ Column {
       getImagePngBlob( img, function(blob) {
           console.log("writing file",fname,"with blob",blob );
           writefile( realdhandle, fname, blob, function() {
-            saverec( i+1,images.slice(1), realdhandle );
+            cb2();
+            saverec( i+1,images.slice(1), realdhandle, cb2 );
           } );
       });
     }
@@ -157,9 +158,9 @@ Column {
     //onIcChanged: generate( current_i )
     //onRtimeChanged: restart()
     
-    function imageAdded(img) {
+    function imageAdded(img,cb) {
       if (!realdhandle) return;
-      saverec( current_i, [img], realdhandle );
+      saverec( current_i, [img], realdhandle, cb );
       current_i = current_i + 1;
       imagesCount =0;
     }

@@ -85,7 +85,7 @@ Item {
         loadFile( imagesCount-1, file );
     }
 
-    function appendDataUrl( dataurl )
+    function appendDataUrl( dataurl, cb )
     {
 
         //adjustSize(imagesCount-1);
@@ -95,7 +95,7 @@ Item {
           newimage.src = dataurl;
           newimage.onload = function()
           {
-            videoEncoder.imageAdded( newimage );
+            videoEncoder.imageAdded( newimage, cb );
             // как вариант пусть ваще сам добавляет.. из урля (файлы тоже к нему сводятся)
             // ну и хочет - кладет в копилку, а хочет сразу жрет
           }
@@ -104,13 +104,15 @@ Item {
         {
           imagesCount = imagesCount+1;
           var img = getImageObject( imagesCount-1 );
-          img.src = dataurl;        
+          img.src = dataurl;
+          cb();
         }
     }
 
-    function finish() {
+    function finish( cb ) {
         console.log("got finish command, generating.")
         videoEncoder.generate();
+        cb();
     }
 
     function adjustHeight(i) {
@@ -132,14 +134,17 @@ Item {
     function receiveMessage(event) {
         var cmd = event.data.cmd;
         var args = event.data.args;
-        debugger;
+
         console.log("cmd=",cmd)
         if (!maker[cmd]) {
           console.error("no such command");
           return;
         }
-        maker[cmd].apply( maker, args );
+        maker[cmd].apply( maker, args.concat([f]) );
         //debugger;
+        function f() {
+          event.source.window.postMessage( {cmd:(cmd+"Done"),ack:event.data.ack},"*");
+        }
     }
 
     Component.onCompleted: {
