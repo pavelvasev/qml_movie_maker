@@ -63,6 +63,9 @@ Item {
     function clear() {
         imagesCount = 0;
         resetTime = new Date();
+        
+//        if (videoEncoder.reset)
+//            videoEncoder.reset();
     }
     function reset() { clear(); }
     
@@ -84,10 +87,25 @@ Item {
 
     function appendDataUrl( dataurl )
     {
-        imagesCount = imagesCount+1;
-        var img = getImageObject( imagesCount-1 );
-        img.src = dataurl;
+
         //adjustSize(imagesCount-1);
+        //streaming: videoEncoder.imageAdded
+        if (videoEncoder.imageAdded) {
+          var newimage = new Image();
+          newimage.src = dataurl;
+          newimage.onload = function()
+          {
+            videoEncoder.imageAdded( newimage );
+            // как вариант пусть ваще сам добавляет.. из урля (файлы тоже к нему сводятся)
+            // ну и хочет - кладет в копилку, а хочет сразу жрет
+          }
+        }
+        else
+        {
+          imagesCount = imagesCount+1;
+          var img = getImageObject( imagesCount-1 );
+          img.src = dataurl;        
+        }
     }
 
     function finish() {
@@ -114,7 +132,12 @@ Item {
     function receiveMessage(event) {
         var cmd = event.data.cmd;
         var args = event.data.args;
+        debugger;
         console.log("cmd=",cmd)
+        if (!maker[cmd]) {
+          console.error("no such command");
+          return;
+        }
         maker[cmd].apply( maker, args );
         //debugger;
     }
@@ -275,6 +298,14 @@ Item {
                         id: ezip
                     }
                 }
+                
+                Tab {
+                    title: "FS"
+                    property var encoder: efs
+                    EncoderFilesystemAPI  {
+                        id: efs
+                    }
+                }                
                 
             }
 
