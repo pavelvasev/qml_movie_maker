@@ -10,12 +10,13 @@ Run via qmlweb.run: http://pavelvasev.github.io/qmlweb.run/?s=https%3A%2F%2Fgith
 # features
 * generate gif, webm
 * download all image files as zip
+* write images as png files to selected dir
 
 # api
-External web apps may send to simple_movie_maker following messages.
+simple_movie_maker recognizes following messages.
 All commands are sent using postMessage with event data, within a key `cmd`.
 
-## reset
+### reset
 Prepare a new recording session.
 
 Example:
@@ -29,9 +30,9 @@ recorderWindow.document.location = "https://viewzavr.com/apps/viewzavr-system-a/
 recorderWindow.postMessage( {cmd:"reset"},"*");
 ```
 
-## append
+### append
 Append image to session. An image should be specified in `args` key which should be an array.
-Image may be an url, data url, or blob.
+Image may be an url, data url, and probably blob. Also it may be an array of such things.
 
 Example:
 ```
@@ -44,7 +45,7 @@ Example 2, appending many images:
 recorderWindow.postMessage( {cmd:"append",args:[img1, img2, img3],ack:subcounter},"*");
 ```
 
-## finish
+### finish
 Finish recording session.
 
 Example:
@@ -53,10 +54,9 @@ recorderWindow.postMessage( {cmd:"finish"},"*");
 ```
 
 ## api replies
-On every message a simple_movie_makers replies with it's own message with same data as it was sent to,
-with `cmd` and `ack` keys from original request. It is useful to track these replies because
-if one sends too many images per second to simple_movie_maker it may drop them. The reply gives
-some guaranties that image is processed.
+simple_movie_makers replies to every message with `cmd` and `ack` keys from original message. 
+It is useful to track these replies because if one sends too many images per second, 
+simple_movie_maker may drop them. The reply gives some guaranties that image is processed.
 
 Example:
 ```
@@ -75,12 +75,13 @@ function receiveMessageAck(event) {
 this will allow to add things like "t=10".
 (but probably this should be rendered right in client).
 * maybe allow user to add text annotations to all images together.
+* extra guide for modules, for example - example scripts for ffpmeg images to video processing,
+or information about codec in Webcodecs module.
 
 # done
 * add `append` method to append not urls (data urls), but say files or blobs.
 Or is it better to make another methods for these data types?
 * maybe change `append` to process many images. in that case, only 1 reply should be sent?
-* extra guide for modules, for example - example scripts for ffpmeg images to video processing,
-or information about codec in Webcodecs module.
+
 
 2015-2021 (c) Pavel Vasev

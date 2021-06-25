@@ -392,7 +392,7 @@ Item {
                 }
                 
                 Tab {
-                    title: "FS"
+                    title: "Dir"
                     property var encoder: efs
                     EncoderFilesystemAPI  {
                         id: efs
