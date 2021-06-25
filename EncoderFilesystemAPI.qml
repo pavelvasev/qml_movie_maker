@@ -1,8 +1,17 @@
 // https://web.dev/file-system-access/
+
+/*
+Example ffmpeg-based bash script to process frames:
+
+#!/bin/bash
+cat *.png | ffmpeg -r 30 -f image2pipe -i - -b:v 16M output-wmv.wmv
+cat *.png | ffmpeg -r 30 -f image2pipe -i - output-mp4.mp4
+
+*/
+
 Column {
     id: enc
-    //    anchors.fill: parent
-    //    color: "grey"
+
     spacing: 5
     
     Button {
@@ -20,7 +29,7 @@ Column {
     }
     
     property var dhandle
-    property var realdhandle    
+    property var realdhandle
     
     onDhandleChanged: {
       console.log("dh changed",dhandle );
@@ -91,10 +100,6 @@ Column {
         return s;
     }
 
-
-    
-    
-    
     function saverec( i, images, realdhandle, cb2 ) {
       if (images.length == 0) return cb2(); // 0. call callback, 1. exit,
       
@@ -138,6 +143,9 @@ Column {
       dhandle = null;
     }
     
+    ////////////////////////////////////////////////
+    // API methods
+    
     // input: array of things (img, blob, dataurl...)
     // output: promise when work is done, null if work is postponed to generate stage.
     function append( array ) {
@@ -160,6 +168,6 @@ Column {
       dhandle.then( function(realdhandle) {
         saverec( 0, images, realdhandle );
       });
-    } // generate func    
+    }
 
 }

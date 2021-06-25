@@ -80,5 +80,7 @@ this will allow to add things like "t=10".
 * add `append` method to append not urls (data urls), but say files or blobs.
 Or is it better to make another methods for these data types?
 * maybe change `append` to process many images. in that case, only 1 reply should be sent?
+* extra guide for modules, for example - example scripts for ffpmeg images to video processing,
+or information about codec in Webcodecs module.
 
 2015-2021 (c) Pavel Vasev

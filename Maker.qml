@@ -149,12 +149,41 @@ Item {
         if (typeof(item) === "string") { // think this is url/dataurl
           img.src = item;
         }
+        
+        // todo: try to write on canvas..
+    }
+    
+    function anythingToImage( item ) {
+      if (item instanceof Image) {
+        return item;
+      }
+      var img = new Image();
+      importImage( img, item );
+      return img;
+    }
+    
+    function anythingToImageBitmapPromise( item ) {
+      if (item instanceof ImageBitmap) {
+        return item;
+      }
+      if (item instanceof File || typeof(item) === "string") {
+        return anythingToImageBitmapPromise( anythingToImage( item ) );
+      }
+      if (item instanceof Image) {
+        return new Promise( function(resolv,reject) {
+          item.decode().then( function() {
+            createImageBitmap( item ).then( function(result) {
+              resolv( result );
+            });
+          });
+        })
+      }
+      return createImageBitmap( item );
     }
 
-    function finish( cb ) {
+    function finish() {
         console.log("got finish command, generating.")
         generate();
-        cb();
         return Promise.resolve();
     }
     
@@ -335,7 +364,7 @@ Item {
                 onCurrentTabChanged: videoEncoder = currentTab.encoder;
                 //height: 30 + (currentTab ? currentTab.height : 0)
                 height: 100
-                width: 250
+                width: 350
                 ///?width: parent.width
                 //width: maker.width/2 - 60
 
@@ -368,7 +397,17 @@ Item {
                     EncoderFilesystemAPI  {
                         id: efs
                     }
-                }                
+                }
+                
+                Tab {
+                    title: "Webcodecs"
+                    property var encoder: ewc
+                    EncoderWebcodecsAPI {
+                        id: ewc
+                    }
+                }
+          
+
                 
             }
 
