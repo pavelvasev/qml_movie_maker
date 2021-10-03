@@ -7,6 +7,8 @@ Example ffmpeg-based bash script to process frames:
 cat *.png | ffmpeg -r 30 -f image2pipe -i - -b:v 16M output-wmv.wmv
 cat *.png | ffmpeg -r 30 -f image2pipe -i - output-mp4.mp4
 
+idea - make a queue of fs writes up to N, because waiting for 1 is very slow.
+
 */
 
 Column {
