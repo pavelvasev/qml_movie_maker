@@ -429,12 +429,7 @@ Item {
                 visible: renderProgress < 1
             }
 
-/*
-            Row {
-                Stepa { text: "IV" }
-                Text { text: "Get output" }
-            }
-*/
+
 
             Text { text: " " }
             Text {
@@ -479,6 +474,14 @@ Item {
                     rimga.dom.children[0].style.border = "1px solid grey";
                 }
             }
+
+
+            Row {
+                Stepa { text: "IV" }
+                //Text { text: "Clear" }
+		Button { text: "Clear"; onClicked: maker.clear(); }
+            }
+
             
         } // encoding column
 
